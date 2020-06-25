@@ -16,10 +16,16 @@ import (
 )
 
 func main() {
-	avatar.ToDisk("AE", "../ae.png")
+	err := avatar.ToDisk("AE", "../ae.png")
+    if err != nil {
+        ...
+    }
 
     // Which is the same as
-    avatar.ToDisk("Andrew Edwards", "../ae.png")
+    err = avatar.ToDisk("Andrew Edwards", "../ae.png")
+    if err != nil {
+        ...
+    }
 }
 
 
@@ -60,7 +66,10 @@ func main() {
 	r.Get("/avatar/{initials}.png", func(w http.ResponseWriter, r *http.Request) {
 		initials := chi.URLParam(r, "initials")
 
-		avatar.ToHTTP(initials, w)
+		err := avatar.ToHTTP(initials, w)
+        if err != nil {
+            ...
+        }
 	})
 
 	http.ListenAndServe(":3000", r)
