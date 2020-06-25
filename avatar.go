@@ -36,6 +36,20 @@ func SetFontFacePath(f string) {
 	fontFacePath = f
 }
 
+func ToBytes(initials string) ([]byte, error) {
+	rgba, err := createAvatar(initials)
+	if err != nil {
+		return nil, err
+	}
+
+	buf := new(bytes.Buffer)
+	if err := png.Encode(buf, rgba); err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
+}
+
 // ToDisk saves the image to disk
 func ToDisk(initials, path string) error {
 	rgba, err := createAvatar(initials)
