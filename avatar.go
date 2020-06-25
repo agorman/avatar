@@ -37,17 +37,6 @@ func SetFontFacePath(f string) {
 	fontFacePath = f
 }
 
-// var sourceDir string
-
-// func init() {
-// 	// We need to set the source directory for the font
-// 	_, filename, _, ok := runtime.Caller(0)
-// 	if !ok {
-// 		panic("No caller information")
-// 	}
-// 	sourceDir = path.Dir(filename)
-// }
-
 // ToDisk saves the image to disk
 func ToDisk(initials, path string) {
 	rgba, err := createAvatar(initials)
@@ -128,7 +117,7 @@ func getFont(fontPath string) (*truetype.Font, error) {
 		fontPath = defaultfontFace
 	}
 	// Read the font data.
-	fontBytes, err := ioutil.ReadFile(fontPath) //fmt.Sprintf("%s/%s", sourceDir, fontFaceName))
+	fontBytes, err := ioutil.ReadFile(fontPath)
 	if err != nil {
 		return nil, err
 	}
