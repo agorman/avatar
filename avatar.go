@@ -8,7 +8,6 @@ import (
 	"image/draw"
 	"image/png"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -38,18 +37,16 @@ func SetFontFacePath(f string) {
 }
 
 // ToDisk saves the image to disk
-func ToDisk(initials, path string) {
+func ToDisk(initials, path string) error {
 	rgba, err := createAvatar(initials)
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 
 	// Save image to disk
 	out, err := os.Create(path)
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return err
 	}
 	defer out.Close()
 
@@ -57,23 +54,17 @@ func ToDisk(initials, path string) {
 
 	err = png.Encode(b, rgba)
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return err
 	}
 
-	err = b.Flush()
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
+	return b.Flush()
 }
 
 // ToHTTP sends the image to a http.ResponseWriter (as a PNG)
-func ToHTTP(initials string, w http.ResponseWriter) {
+func ToHTTP(initials string, w http.ResponseWriter) error {
 	rgba, err := createAvatar(initials)
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 
 	b := new(bytes.Buffer)
@@ -81,7 +72,7 @@ func ToHTTP(initials string, w http.ResponseWriter) {
 
 	err = png.Encode(b, rgba)
 	if err != nil {
-		log.Println("unable to encode image.")
+		return err
 	}
 
 	w.Header().Set("Content-Type", "image/png")
@@ -89,9 +80,8 @@ func ToHTTP(initials string, w http.ResponseWriter) {
 	w.Header().Set("Cache-Control", "max-age=2592000") // 30 days
 	w.Header().Set("Etag", `"`+key+`"`)
 
-	if _, err := w.Write(b.Bytes()); err != nil {
-		log.Println("unable to write image.")
-	}
+	_, err = w.Write(b.Bytes())
+	return err
 }
 
 func cleanString(incoming string) string {
